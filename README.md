@@ -2,6 +2,7 @@
 Install dependencies required https://github.com/python-telegram-bot/python-telegram-bot.
 
 Edit the line 24 and insert your API TOKEN.
+You can add your @ channels in line 22.
 
 
 Use /help for commands available
