@@ -21,8 +21,9 @@ logger = logging.getLogger(__name__)
 # This list stores all the users that use the bot.
 user_id = []
 
-token = "Your API token"
-
+token = "Insert your token"
+enviado = 0
+palabra = "Alicante"
 
 # Define a few command handlers. These usually take the two arguments update and
 # context. Error handlers also receive the raised TelegramError object in error.
@@ -35,21 +36,34 @@ def start(update, context):
 
 def help(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Utiliza /entradas para obtener las entradas actuales \nUtiliza /stop para detener el bot.')
+    update.message.reply_text('Utiliza /entradas para obtener las entradas actuales. \nUtiliza /stop para detener el bot.')
 
 def echo(update, context):
     """Send a message when the command /help is issued."""
-    update.message.reply_text('Comando no válido')
+    update.message.reply_text('Comando no válido. !\nUtiliza /help para obtener los comandos disponibles.')
 
 def stop(update, context):
     """Stop alerts"""
-    update.message.reply_text('Ya no te avisaré más de próximos cambios')
+    update.message.reply_text('Ya no te avisaré más de próximos cambios.')
     uid = update.message.chat_id
     delete_user(uid)
 
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
+
+# ==================== ADMIN FUNCTIONS =========================================
+
+def cambiar_entradas(update, context):
+    """Cambiar entrada a buscar"""
+    global palabra
+    global enviado
+    z = update.message.text
+    x = z.replace("/nuevabusqueda","")
+    palabra = x.replace(" ","")
+    print(palabra)
+    enviado = 0
+    update.message.reply_text('Perfecto, te avisaré cuando haya entradas disponibles para: ' +palabra)
 
 # ==================== OTHER FUNCTIONS =========================================
 
@@ -90,19 +104,20 @@ def get_scrapeo():
 def job():
     """Funcion que ejecuta la comprobacion de cambio de entradas"""
 
-    os.system("python web-s.py")
-    print("Ejecutado scrapeo.")
+    """os.system("python web-s.py")
+    print("Ejecutado scrapeo.")"""
 
     r_file = open("kk.txt", "r")
     texto = r_file.readline() + "\n"
     r_file.close()
 
-    palabra = "Alicante"
+    global palabra
+    global enviado
 
-    if palabra in texto:
-        print (palabra)
+    if palabra in texto and enviado != 1:
         broadcast("¡¡¡Ya estan las nuevas entradas!!! \nhttps://www.worldpadeltour.com/entradas")
         print("Datos enviados.")
+        enviado = 1
     else:
         print("No existe")
 
@@ -119,7 +134,6 @@ def main():
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
     updater = Updater(token, use_context=True)
-
     # Get the dispatcher to register handlers
     dp = updater.dispatcher
 
@@ -128,6 +142,10 @@ def main():
     dp.add_handler(CommandHandler("help", help))
     dp.add_handler(CommandHandler("entradas", entradas))
     dp.add_handler(CommandHandler("stop", stop))
+
+    # comandos admin
+
+    dp.add_handler(CommandHandler("nuevabusqueda", cambiar_entradas))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))
@@ -139,7 +157,7 @@ def main():
     updater.start_polling()
     
     # Declaration of the schedule
-    schedule.every(20).seconds.do(job)
+    schedule.every(5).seconds.do(job)
 
     while True:
         schedule.run_pending()
