@@ -7,3 +7,4 @@ Edit the line 24 and insert your API TOKEN.
 Use /help for commands available
 
 Use /nuevabusqueda for search new tickets
+Use /busqueda for view actual tickets search
