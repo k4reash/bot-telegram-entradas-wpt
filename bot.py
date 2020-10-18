@@ -109,8 +109,8 @@ def get_scrapeo():
 def job():
     """Funcion que ejecuta la comprobacion de cambio de entradas"""
 
-    """os.system("python web-s.py")
-    print("Ejecutado scrapeo.")"""
+    os.system("python web-s.py")
+    print("Ejecutado scrapeo.")
 
     r_file = open("kk.txt", "r")
     texto = r_file.readline() + "\n"
