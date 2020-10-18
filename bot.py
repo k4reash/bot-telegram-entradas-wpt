@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 # This list stores all the users that use the bot.
 user_id = []
 
-token = "Insert your token"
+token = "Insert your API token"
 enviado = 0
 palabra = "Alicante"
 
@@ -64,6 +64,11 @@ def cambiar_entradas(update, context):
     print(palabra)
     enviado = 0
     update.message.reply_text('Perfecto, te avisaré cuando haya entradas disponibles para: ' +palabra)
+
+def busqueda_actual(update, context):
+    """Indica para que campeonato está buscando entradas actualmente."""
+    global palabra
+    update.message.reply_text('Actualmente estoy buscando entradas nuevas para: '+palabra)
 
 # ==================== OTHER FUNCTIONS =========================================
 
@@ -146,6 +151,7 @@ def main():
     # comandos admin
 
     dp.add_handler(CommandHandler("nuevabusqueda", cambiar_entradas))
+    dp.add_handler(CommandHandler("busqueda", busqueda_actual))
 
     # on noncommand i.e message - echo the message on Telegram
     dp.add_handler(MessageHandler(Filters.text, echo))
